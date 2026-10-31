@@ -31,3 +31,10 @@
 ## Next
 Step 3 — Generate a larger synthetic dataset with
 ground-truth labels and institution name variations.
+### Step 3 — Synthetic dataset
+- [x] Ten synthetic institution records generated
+- [x] Ten synthetic complaints generated
+- [x] Four positive ground-truth pairs created
+- [x] One negative ground-truth pair created
+- [x] Ground-truth JSON exported
+- [x] Duplicate generation prevented

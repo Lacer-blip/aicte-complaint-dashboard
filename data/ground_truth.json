@@ -1,0 +1,29 @@
+{
+    "dataset": "AICTE SIH synthetic demonstration dataset",
+    "synthetic": true,
+    "description": "Positive pairs refer to the same underlying institution. Negative pairs refer to different institutions with similar names.",
+    "positive_pairs": [
+        [
+            "SYN-RB-001",
+            "SYN-PGRC-001"
+        ],
+        [
+            "SYN-RB-002",
+            "SYN-PGRC-002"
+        ],
+        [
+            "SYN-RB-003",
+            "SYN-PGRC-003"
+        ],
+        [
+            "SYN-RB-004",
+            "SYN-PGRC-004"
+        ]
+    ],
+    "negative_pairs": [
+        [
+            "SYN-RB-005",
+            "SYN-PGRC-005"
+        ]
+    ]
+}
