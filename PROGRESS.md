@@ -57,3 +57,23 @@ ground-truth labels and institution name variations.
 - [x] Candidate margin checks
 - [x] Human-review requirement
 - [x] Five resolver tests
+
+### Step 6 — Cross-bureau overlap detection
+- [x] Group complaints by institution record
+- [x] Ignore closed/resolved complaints
+- [x] Detect active cases across different bureaus
+- [x] Normalize bureau names before comparison
+- [x] Generate explainable overlap signals
+- [x] Require human review
+- [x] Six overlap detection tests
+
+### Step 7 — SLA monitoring and matching evaluation
+- [x] Closed complaint detection
+- [x] Missing deadline handling
+- [x] Overdue complaint detection
+- [x] Due-soon alerts (48-hour window)
+- [x] On-track complaint detection
+- [x] Precision calculation
+- [x] Recall calculation
+- [x] F1-score calculation
+- [x] Eight SLA and evaluation tests
