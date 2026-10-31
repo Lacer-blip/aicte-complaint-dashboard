@@ -1,0 +1,4 @@
+case_number,permanent_id,institution_name,district,state,pincode,bureau,subject,description,status,assigned_officer,received_at,due_at
+CSV-2026-001,,Central Institute of Technology,Bhopal,Madhya Pradesh,462003,Other Bureau,Hostel facilities,Complaint regarding hostel facilities,Open,Officer E,2026-10-25T10:00:00,2026-11-10T10:00:00
+CSV-2026-002,,New Technical College,Bhopal,Madhya Pradesh,462016,PGRC,Library facilities,Complaint regarding library resources,Under Review,Officer F,2026-10-26T11:00:00,2026-11-12T11:00:00
+CSV-2026-003,,National Engineering College,Indore,Madhya Pradesh,452001,Regional Bureau,Faculty availability,Complaint regarding faculty availability,Open,Officer G,2026-10-27T12:00:00,2026-11-15T12:00:00

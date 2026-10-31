@@ -38,3 +38,12 @@ ground-truth labels and institution name variations.
 - [x] One negative ground-truth pair created
 - [x] Ground-truth JSON exported
 - [x] Duplicate generation prevented
+
+### Step 4 — CSV ingestion
+- [x] CSV reader and required-field validation
+- [x] Basic institution name normalization
+- [x] Permanent ID matching priority
+- [x] Exact identity matching fallback
+- [x] Duplicate case-number protection
+- [x] Audit entries for imported complaints
+- [x] Sample CSV created
