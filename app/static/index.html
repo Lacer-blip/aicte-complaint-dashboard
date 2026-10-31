@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AICTE | Complaint Monitoring</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        header {
+            padding: 22px 32px;
+            background: #123b65;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        header p {
+            margin: 0;
+            color: #d9e7f5;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            padding: 28px;
+            margin-bottom: 20px;
+            background: white;
+            border: 1px solid #dce4ee;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(20, 45, 75, 0.05);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #e5f7ed;
+            color: #176b40;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        footer {
+            padding: 20px;
+            color: #60738a;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AICTE Complaint Monitoring</h1>
+        <p>Integrated Institution Complaint Monitoring and Status Dashboard</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <span class="status">Prototype Environment</span>
+            <h2>Welcome to the monitoring portal</h2>
+            <p>
+                A unified workspace for monitoring institution complaints,
+                identifying potential overlaps, and tracking resolution status.
+            </p>
+            <p>
+                <strong>Current stage:</strong>
+                Initial application setup.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>System status</h2>
+            <p id="api-status">Checking backend connection...</p>
+        </section>
+    </main>
+
+    <footer>
+        SIH Prototype · Demonstration data will be clearly labelled
+    </footer>
+
+    <script>
+        async function checkBackend() {
+            const statusElement = document.getElementById("api-status");
+
+            try {
+                const response = await fetch("/api/health");
+
+                if (!response.ok) {
+                    throw new Error("Backend returned an error.");
+                }
+
+                const data = await response.json();
+                statusElement.textContent = "Backend connected: " + data.status;
+            } catch (error) {
+                statusElement.textContent =
+                    "Backend connection failed. Check the server terminal.";
+            }
+        }
+
+        checkBackend();
+    </script>
+</body>
+</html>
