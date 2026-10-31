@@ -47,3 +47,13 @@ ground-truth labels and institution name variations.
 - [x] Duplicate case-number protection
 - [x] Audit entries for imported complaints
 - [x] Sample CSV created
+
+### Step 5 — Institution resolver
+- [x] Permanent ID matching
+- [x] Institution name normalization
+- [x] Exact identity matching
+- [x] Conservative fuzzy matching
+- [x] Location evidence checks
+- [x] Candidate margin checks
+- [x] Human-review requirement
+- [x] Five resolver tests
