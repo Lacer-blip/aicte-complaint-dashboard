@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #1B3A6B;
+  --color-bg: #F4F6FA;
+  --color-border: #DDE3EE;
+  --color-on-track: #1E7B4F;
+  --color-approaching: #B7791F;
+  --color-overdue: #B3261E;
+  --color-paused: #5B6B86;
+}
+
+body {
+  background-color: var(--color-bg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible accessible focus rings for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #1B3A6B;
+  outline-offset: 2px;
+}
