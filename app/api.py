@@ -108,8 +108,8 @@ def serialize_complaint(complaint):
             complaint.due_at.isoformat()
             if complaint.due_at else None
         ),
-        "sla_status": get_sla_status(complaint.due_at, complaint.status),
-    }
+         "sla_status": get_sla_status(complaint),
+        }
 
 
 def serialize_audit_log(log):
@@ -142,12 +142,12 @@ def dashboard_summary(
 
     overdue = sum(
         1 for case in active
-        if get_sla_status(case.due_at, case.status) == "OVERDUE"
+        if get_sla_status(case) == "OVERDUE"
     )
 
     due_soon = sum(
         1 for case in active
-        if get_sla_status(case.due_at, case.status) == "DUE_SOON"
+        if get_sla_status(case) == "DUE_SOON"
     )
 
     return {
@@ -385,32 +385,4 @@ def list_audit_logs(
         "count": len(logs),
         "items": [serialize_audit_log(log) for log in logs],
         "synthetic_data": True,
-    }
-
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-
-@router.post("/auth/login")
-def login(request: LoginRequest):
-    user = authenticate_user(request.username, request.password)
-
-    if not user:
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect username or password",
-        )
-
-    token = create_access_token(
-        user["username"],
-        user["role"],
-    )
-
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "username": user["username"],
-        "role": user["role"],
-        "expires_in": 28800,
     }
