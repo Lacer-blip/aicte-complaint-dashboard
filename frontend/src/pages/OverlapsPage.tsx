@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../api/http';
 import { useCan } from '../auth/can';
+import { exportPdf, exportXlsx } from '../utils/exportUtils';
 
 interface Overlap {
   case_1: string;
@@ -88,7 +89,7 @@ const OverlapCard: React.FC<{
           <span className="mx-2 text-slate-400">↔</span>
           <span className="font-mono">{item.case_2}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {decision && (
             <span className={`px-2 py-0.5 rounded text-xs font-bold ${ACTION_STYLE[decision.action] ?? ''}`}>
               {ACTION_LABEL[decision.action] ?? decision.action} by {decision.actor}
@@ -97,6 +98,11 @@ const OverlapCard: React.FC<{
           <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-[#1B3A6B]">
             {item.confidence}
           </span>
+          {item.subject_similarity < 0.4 && (
+            <span className="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-[#B7791F]">
+              Weak subject match
+            </span>
+          )}
         </div>
       </div>
 
@@ -156,9 +162,7 @@ const OverlapCard: React.FC<{
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder={
-                  pending === 'DISMISS' ? 'Reason (required)' : 'Note (optional)'
-                }
+                placeholder={pending === 'DISMISS' ? 'Reason (required)' : 'Note (optional)'}
                 className="w-full border border-[#DDE3EE] rounded px-3 py-2 text-sm"
                 rows={2}
               />
@@ -226,31 +230,59 @@ export const OverlapsPage: React.FC = () => {
   }
 
   const keyOf = (o: Overlap) => `${o.case_1}|${o.case_2}`;
-  const items = overlaps.data.items.filter((o) => {
-    const reviewed = latest.has(keyOf(o));
-    return filter === 'ALL' || (filter === 'REVIEWED' ? reviewed : !reviewed);
-  });
+
+  const items = overlaps.data.items
+    .filter((o) => {
+      const reviewed = latest.has(keyOf(o));
+      return filter === 'ALL' || (filter === 'REVIEWED' ? reviewed : !reviewed);
+    })
+    .sort((a, b) => b.subject_similarity - a.subject_similarity);
+
+  const exportRows = items.map((o) => ({
+    'Case 1': o.case_1,
+    'Case 2': o.case_2,
+    'Institution 1': o.institution_1,
+    'Institution 2': o.institution_2,
+    'Bureau 1': o.bureau_1,
+    'Bureau 2': o.bureau_2,
+    Confidence: o.confidence,
+    'Institution similarity': pct(o.institution_similarity),
+    'Subject similarity': pct(o.subject_similarity),
+    'Latest decision': latest.get(keyOf(o))?.action ?? 'Pending'
+  }));
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-[#0B2447]">
-            Potential Overlaps ({items.length})
-          </h1>
+          <h1 className="text-xl font-bold text-[#0B2447]">Potential Overlaps ({items.length})</h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Suggestions only. An officer must review each pair. Nothing is merged automatically.
           </p>
         </div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          className="border border-[#DDE3EE] rounded px-2 py-1.5 text-sm"
-        >
-          <option value="ALL">All</option>
-          <option value="PENDING">Pending review</option>
-          <option value="REVIEWED">Reviewed</option>
-        </select>
+        <div className="flex items-center gap-2">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as typeof filter)}
+            className="border border-[#DDE3EE] rounded px-2 py-1.5 text-sm"
+          >
+            <option value="ALL">All</option>
+            <option value="PENDING">Pending review</option>
+            <option value="REVIEWED">Reviewed</option>
+          </select>
+          <button
+            onClick={() => exportXlsx(exportRows, 'overlaps', 'Overlaps')}
+            className="text-xs font-bold bg-[#1E7B4F] text-white rounded px-3 py-1.5"
+          >
+            Excel
+          </button>
+          <button
+            onClick={() => exportPdf('Potential overlaps report', exportRows, 'overlaps')}
+            className="text-xs font-bold bg-[#0B2447] text-white rounded px-3 py-1.5"
+          >
+            PDF
+          </button>
+        </div>
       </div>
 
       {items.map((o) => (

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '../api/http';
 import { Link } from 'react-router-dom';
+import { exportPdf, exportXlsx } from '../utils/exportUtils';
 
 interface Complaint {
   case_number: string;
@@ -24,6 +25,18 @@ const SLA_STYLE: Record<string, string> = {
 };
 
 const fmt = (d: string | null) => (d ? new Date(d).toLocaleDateString('en-IN') : '-');
+const toExport = (list: Complaint[]) =>
+  list.map((c) => ({
+    Case: c.case_number,
+    Institution: c.institution_name ?? '',
+    Bureau: c.bureau,
+    Subject: c.subject,
+    Status: c.status,
+    Officer: c.assigned_officer ?? '',
+    Received: fmt(c.received_at),
+    Due: fmt(c.due_at),
+    SLA: c.sla_status
+  }));
 
 export const ComplaintsPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -67,6 +80,18 @@ export const ComplaintsPage: React.FC = () => {
             <option value="ON_TRACK">On track</option>
             <option value="CLOSED">Closed</option>
           </select>
+          <button
+  onClick={() => exportXlsx(toExport(rows), 'complaints', 'Complaints')}
+  className="text-xs font-bold bg-[#1E7B4F] text-white rounded px-3 py-1.5"
+>
+  Excel
+</button>
+<button
+  onClick={() => exportPdf('Complaints report', toExport(rows), 'complaints')}
+  className="text-xs font-bold bg-[#0B2447] text-white rounded px-3 py-1.5"
+>
+  PDF
+</button>
         </div>
       </div>
 
