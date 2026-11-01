@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '../api/http';
 import { DashboardCharts } from './DashboardCharts';
+import { DashboardInsights } from './DashboardInsights';
 
 interface Summary {
   total_complaints: number;
@@ -52,8 +53,9 @@ export const DashboardPage: React.FC = () => {
           color="#1B3A6B"
           note="Suggestions only, human review required"
         />
-              <DashboardCharts />
       </div>
+      <DashboardInsights />
+      <DashboardCharts />
     </div>
   );
 };

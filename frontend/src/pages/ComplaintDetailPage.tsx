@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { apiFetch } from '../api/http';
+import { OverlapBanner } from '../components/OverlapBanner';
 
 interface Detail {
   complaint: {
@@ -45,6 +46,7 @@ export const ComplaintDetailPage: React.FC = () => {
   return (
     <div className="space-y-4">
       <Link to="/complaints" className="text-xs text-[#1B3A6B] hover:underline">← Back to complaints</Link>
+      <OverlapBanner caseNumber={c.case_number} />
       <div className="bg-white border border-[#DDE3EE] rounded-lg p-5 space-y-3">
         <div>
           <div className="font-mono text-xs text-slate-500">{c.case_number}</div>

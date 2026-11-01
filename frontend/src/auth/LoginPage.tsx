@@ -8,6 +8,7 @@ import { Role } from '../api/types';
 const DEMO_ACCOUNTS = [
   { username: 'admin', label: 'Admin' },
   { username: 'rb_officer', label: 'RB Officer' },
+  { username: 'pgrc_officer', label: 'PGRC Officer' },
   { username: 'management', label: 'Management' }
 ];
 
@@ -113,7 +114,7 @@ export const LoginPage: React.FC = () => {
             <div className="text-xs font-bold text-slate-500 uppercase mb-2">
               Demo accounts (synthetic data)
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {DEMO_ACCOUNTS.map((a) => (
                 <button
                   key={a.username}
