@@ -11,7 +11,43 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from app.auth import (
+    authenticate_user,
+    create_access_token,
+    get_user_from_token,
+)
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 router = APIRouter(prefix="/api", tags=["Dashboard and Operations"])
+
+@router.post("/auth/login")
+def login(request: LoginRequest):
+    user = authenticate_user(request.username, request.password)
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+        )
+
+    token = create_access_token(
+        user["username"],
+        user["role"],
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "username": user["username"],
+        "role": user["role"],
+        "expires_in": 28800,
+    }
+
 
 VALID_ROLES = {
     "RB",
@@ -31,16 +67,14 @@ def get_db():
         db.close()
 
 
+security = HTTPBearer()
+
+
 def get_current_role(
-    x_demo_role: str = Header(..., alias="X-Demo-Role")
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    role = x_demo_role.strip().upper()
-
-    if role not in VALID_ROLES:
-        raise HTTPException(status_code=403, detail="Invalid demo role")
-
-    return role
-
+    payload = get_user_from_token(credentials.credentials)
+    return payload["role"]
 
 def serialize_institution(institution):
     return {
@@ -268,6 +302,11 @@ def record_overlap_decision(
     db: Session = Depends(get_db),
     role: str = Depends(get_current_role),
 ):
+    if role not in {"RB", "PGRC", "OTHER_BUREAU", "ADMIN"}:
+        raise HTTPException(
+            status_code=403,
+            detail="Your role cannot perform overlap review decisions",
+        )
     if decision.case_number_1 == decision.case_number_2:
         raise HTTPException(
             status_code=400,
@@ -346,4 +385,32 @@ def list_audit_logs(
         "count": len(logs),
         "items": [serialize_audit_log(log) for log in logs],
         "synthetic_data": True,
+    }
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+@router.post("/auth/login")
+def login(request: LoginRequest):
+    user = authenticate_user(request.username, request.password)
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+        )
+
+    token = create_access_token(
+        user["username"],
+        user["role"],
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "username": user["username"],
+        "role": user["role"],
+        "expires_in": 28800,
     }
