@@ -94,3 +94,11 @@ ground-truth labels and institution name variations.
 - [x] Complaint audit history in detail response
 - [x] Complaint and institution data serialization
 - [x] Not-found responses
+
+### Step 9.4 — Human decisions and audit trail
+- [x] Confirm potential overlap link
+- [x] Dismiss overlap with mandatory reason
+- [x] Request coordination action
+- [x] Record decisions in append-only audit log
+- [x] Add audit log listing endpoint
+- [x] Prevent automatic case merging

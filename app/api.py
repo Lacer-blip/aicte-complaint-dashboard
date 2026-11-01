@@ -6,6 +6,11 @@ from app.models import AuditLog, Complaint, Institution
 from app.overlap import detect_overlaps
 from app.sla import get_sla_status
 
+import json
+from typing import Literal
+
+from pydantic import BaseModel
+
 router = APIRouter(prefix="/api", tags=["Dashboard and Operations"])
 
 VALID_ROLES = {
@@ -246,5 +251,99 @@ def list_overlaps(
     return {
         "count": len(overlaps),
         "items": overlaps,
+        "synthetic_data": True,
+    }
+
+
+class OverlapDecisionRequest(BaseModel):
+    case_number_1: str
+    case_number_2: str
+    action: Literal["CONFIRM_LINK", "DISMISS", "REQUEST_COORDINATION"]
+    reason: str = ""
+
+
+@router.post("/overlaps/decision")
+def record_overlap_decision(
+    decision: OverlapDecisionRequest,
+    db: Session = Depends(get_db),
+    role: str = Depends(get_current_role),
+):
+    if decision.case_number_1 == decision.case_number_2:
+        raise HTTPException(
+            status_code=400,
+            detail="An overlap requires two different cases",
+        )
+
+    if decision.action == "DISMISS" and not decision.reason.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="A reason is required to dismiss an overlap",
+        )
+
+    first = (
+        db.query(Complaint)
+        .filter(Complaint.case_number == decision.case_number_1)
+        .first()
+    )
+    second = (
+        db.query(Complaint)
+        .filter(Complaint.case_number == decision.case_number_2)
+        .first()
+    )
+
+    if not first or not second:
+        raise HTTPException(status_code=404, detail="One or both cases not found")
+
+    detected = detect_overlaps([first, second])
+
+    if not detected:
+        raise HTTPException(
+            status_code=400,
+            detail="These cases are not currently detected as a potential overlap",
+        )
+
+    details = {
+        "case_number_1": first.case_number,
+        "case_number_2": second.case_number,
+        "action": decision.action,
+        "reason": decision.reason.strip(),
+        "human_review": True,
+        "automatic_merge": False,
+    }
+
+    audit_entry = AuditLog(
+        actor=role,
+        action=decision.action,
+        entity_type="overlap",
+        entity_id=f"{first.case_number}|{second.case_number}",
+        details=json.dumps(details),
+    )
+
+    db.add(audit_entry)
+    db.commit()
+    db.refresh(audit_entry)
+
+    return {
+        "message": "Human review decision recorded",
+        "decision": details,
+        "audit_id": audit_entry.id,
+        "synthetic_data": True,
+    }
+
+
+@router.get("/audit")
+def list_audit_logs(
+    db: Session = Depends(get_db),
+    role: str = Depends(get_current_role),
+):
+    logs = (
+        db.query(AuditLog)
+        .order_by(AuditLog.created_at.desc())
+        .all()
+    )
+
+    return {
+        "count": len(logs),
+        "items": [serialize_audit_log(log) for log in logs],
         "synthetic_data": True,
     }
