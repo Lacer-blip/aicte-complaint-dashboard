@@ -7,6 +7,7 @@ from app.overlap import detect_overlaps
 from app.sla import get_sla_status
 
 import json
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel
@@ -384,5 +385,61 @@ def list_audit_logs(
     return {
         "count": len(logs),
         "items": [serialize_audit_log(log) for log in logs],
+        "synthetic_data": True,
+    }
+
+
+GROUND_TRUTH_PATH = Path(__file__).resolve().parent.parent / "data" / "ground_truth.json"
+
+
+@router.get("/evaluation")
+def evaluation(
+    db: Session = Depends(get_db),
+    role: str = Depends(get_current_role),
+):
+    if not GROUND_TRUTH_PATH.exists():
+        raise HTTPException(status_code=404, detail="Ground truth file not found")
+
+    truth = json.loads(GROUND_TRUTH_PATH.read_text(encoding="utf-8"))
+    positives = {frozenset(p) for p in truth["positive_pairs"]}
+    negatives = {frozenset(p) for p in truth["negative_pairs"]}
+
+    complaints = (
+        db.query(Complaint)
+        .filter(Complaint.case_number.like("SYN-%"))
+        .all()
+    )
+    predicted = {
+        frozenset((o["case_1"], o["case_2"]))
+        for o in detect_overlaps(complaints)
+    }
+
+    true_pos = positives & predicted
+    false_neg = positives - predicted
+    false_pos = predicted - positives
+
+    precision = len(true_pos) / len(predicted) if predicted else 0.0
+    recall = len(true_pos) / len(positives) if positives else 0.0
+    f1 = (
+        2 * precision * recall / (precision + recall)
+        if (precision + recall) > 0
+        else 0.0
+    )
+
+    def listify(pairs):
+        return sorted(sorted(p) for p in pairs)
+
+    return {
+        "dataset": truth.get("dataset"),
+        "scope": "SYN-* synthetic complaints only",
+        "precision": round(precision, 3),
+        "recall": round(recall, 3),
+        "f1": round(f1, 3),
+        "predicted_count": len(predicted),
+        "true_positives": listify(true_pos),
+        "false_positives": listify(false_pos),
+        "false_negatives": listify(false_neg),
+        "negative_pairs_wrongly_flagged": listify(negatives & predicted),
+        "negative_pairs_total": len(negatives),
         "synthetic_data": True,
     }

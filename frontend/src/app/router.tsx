@@ -10,7 +10,7 @@ import { OverlapsPage } from '../pages/OverlapsPage';
 import { InstitutionsPage } from '../pages/InstitutionsPage';
 import { InstitutionDetailPage } from '../pages/InstitutionDetailPage';
 import { AuditPage } from '../pages/AuditPage';
-
+import { EvaluationPage } from '../pages/EvaluationPage';
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   {
@@ -28,6 +28,7 @@ export const router = createBrowserRouter([
       { path: 'overlaps', element: <OverlapsPage /> },
       { path: 'institutions', element: <InstitutionsPage /> },
       { path: 'institutions/:id', element: <InstitutionDetailPage /> },
+      { path: 'evaluation', element: <EvaluationPage /> },
       {
         path: 'audit',
         element: (

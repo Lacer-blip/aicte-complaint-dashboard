@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, GitCompare, Building2, ScrollText, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, GitCompare, Building2, ScrollText, LogOut,BarChart3 } from 'lucide-react';
 import { useSessionStore } from '../auth/session';
 import { canRole } from '../auth/can';
 
@@ -9,6 +9,7 @@ const NAV = [
   { label: 'Complaints', to: '/complaints', icon: FileText },
   { label: 'Overlaps', to: '/overlaps', icon: GitCompare },
   { label: 'Institutions', to: '/institutions', icon: Building2 },
+  { label: 'Evaluation', to: '/evaluation', icon: BarChart3 },
   { label: 'Audit Log', to: '/audit', icon: ScrollText, permission: 'VIEW_AUDIT_LOG' }
 ];
 
