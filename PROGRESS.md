@@ -86,3 +86,11 @@ ground-truth labels and institution name variations.
 - [x] Use PROBABLE and POSSIBLE confidence levels
 - [x] Require human review
 - [x] Seven overlap tests
+
+### Step 9.3 — Case and institution detail APIs
+- [x] Institution listing endpoint
+- [x] Institution profile endpoint
+- [x] Individual complaint detail endpoint
+- [x] Complaint audit history in detail response
+- [x] Complaint and institution data serialization
+- [x] Not-found responses
