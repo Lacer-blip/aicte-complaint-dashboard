@@ -5,14 +5,11 @@ import { RequireAuth } from './guards';
 import { LoginPage } from '../auth/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ComplaintsPage } from '../pages/ComplaintsPage';
+import { ComplaintDetailPage } from '../pages/ComplaintDetailPage';
 import { OverlapsPage } from '../pages/OverlapsPage';
-
-const Soon: React.FC<{ title: string }> = ({ title }) => (
-  <div className="bg-white border border-[#DDE3EE] rounded-lg p-6">
-    <h1 className="text-lg font-bold text-[#0B2447]">{title}</h1>
-    <p className="text-sm text-slate-500 mt-1">Coming in the next step.</p>
-  </div>
-);
+import { InstitutionsPage } from '../pages/InstitutionsPage';
+import { InstitutionDetailPage } from '../pages/InstitutionDetailPage';
+import { AuditPage } from '../pages/AuditPage';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -27,13 +24,15 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'complaints', element: <ComplaintsPage /> },
+      { path: 'complaints/:caseNumber', element: <ComplaintDetailPage /> },
       { path: 'overlaps', element: <OverlapsPage /> },
-      { path: 'institutions', element: <Soon title="Institutions" /> },
+      { path: 'institutions', element: <InstitutionsPage /> },
+      { path: 'institutions/:id', element: <InstitutionDetailPage /> },
       {
         path: 'audit',
         element: (
           <RequireAuth permission="VIEW_AUDIT_LOG">
-            <Soon title="Audit Log" />
+            <AuditPage />
           </RequireAuth>
         )
       }

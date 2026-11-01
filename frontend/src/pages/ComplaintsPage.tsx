@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '../api/http';
+import { Link } from 'react-router-dom';
 
 interface Complaint {
   case_number: string;
@@ -85,7 +86,11 @@ export const ComplaintsPage: React.FC = () => {
           <tbody>
             {rows.map((c) => (
               <tr key={c.case_number} className="border-t border-[#DDE3EE]">
-                <td className="px-3 py-2 font-mono text-xs">{c.case_number}</td>
+                <td className="px-3 py-2 font-mono text-xs">
+                   <Link to={`/complaints/${c.case_number}`} className="text-[#1B3A6B] hover:underline">
+                               {c.case_number}
+                   </Link>
+                </td>
                 <td className="px-3 py-2">{c.institution_name}</td>
                 <td className="px-3 py-2">{c.bureau}</td>
                 <td className="px-3 py-2">{c.subject}</td>
