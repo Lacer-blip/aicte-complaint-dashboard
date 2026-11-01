@@ -77,3 +77,12 @@ ground-truth labels and institution name variations.
 - [x] Recall calculation
 - [x] F1-score calculation
 - [x] Eight SLA and evaluation tests
+### Step 9.2 — Integrated institution and complaint matching
+- [x] Compare separate institution records
+- [x] Normalize institution names
+- [x] Use district, state and PIN code evidence
+- [x] Compare complaint subjects as supporting evidence
+- [x] Generate explainable potential overlap signals
+- [x] Use PROBABLE and POSSIBLE confidence levels
+- [x] Require human review
+- [x] Seven overlap tests
